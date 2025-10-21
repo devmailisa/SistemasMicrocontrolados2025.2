@@ -1,18 +1,17 @@
 #include <stdint.h>
-#include <uart2.h>
 #include <systick.h>
 #include <stdio.h>
 #include <fpu.h>
+#include <uart2.h>
+#include <timer2.h>
 #define baudRate 	115200
 #define clk			16000000
 
 int main(void)
 {
-	uart2RxTxIni(baudRate,clk);
+	timer2();
 
-	while(1)
-	{
-		uart2SendString("IFPB-Sistemas Microcontrolados\r\n");
-		delayMs(1000);
+	while(1){
+
 	}
 }
