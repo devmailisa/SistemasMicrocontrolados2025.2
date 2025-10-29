@@ -1,0 +1,5 @@
+../Src/main.c:28:6:status	5
+../Src/main.c:41:6:on	5
+../Src/main.c:64:6:off	5
+../Src/main.c:87:6:toggle	5
+../Src/main.c:110:5:main	14
