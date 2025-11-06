@@ -13,15 +13,12 @@ int main(void)
 	uart4RxTxIni(baudRate, clkPerif);
 	fpuEnable();
 
-	float valor;
-
-	string inputString = "";
+	char * inputString = "";
 	while(1)
 	{
-		printf("Informe um valor:\n");
+		printf("Informe um valor:\r\n");
 		inputString = uart4ReadString();
-		sscanf(inputString, "%f", &valor); //@suppress("Float formatting support")
-		printf("Valor informado: %.2f\n\r", valor); //@suppress("Float formatting support")
+		printf("Valor informado: %s\r\n", inputString);
 		delayMs(2000);
 	}
 

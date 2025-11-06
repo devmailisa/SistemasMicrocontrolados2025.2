@@ -3,8 +3,8 @@
 
 void uart4RxTxIni(uint32_t baudRate, uint32_t clkPerif);
 void uart4Write(int ch);
-int __io_putchar(int ch);
 char uart4Read(void);
 char* uart4ReadString(void);
+void uart4SendString(const char *str);
 
 #endif /* UART4_H_ */

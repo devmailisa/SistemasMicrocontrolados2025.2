@@ -1,3 +1,5 @@
-../Src/uart4.c:19:6:uart4TxIni	1
-../Src/uart4.c:53:6:uart4Write	2
-../Src/uart4.c:65:5:__io_putchar	1
+../Src/uart4.c:21:6:uart4RxTxIni	1
+../Src/uart4.c:56:6:uart4Write	2
+../Src/uart4.c:68:5:__io_putchar	1
+../Src/uart4.c:74:6:uart4Read	2
+../Src/uart4.c:83:7:uart4ReadString	3

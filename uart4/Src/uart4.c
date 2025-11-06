@@ -8,16 +8,16 @@
 #define enableGPIOA	(1U<<0)
 #define UART4EN		(1U<<19)
 
-#define TE			(1U<<3) //Transmissor
+#define TE			(1U<<3) //Transmissor PA0 -> A0
 #define UE			(1U<<13)
-#define RE			(1U<<2) //Receptor
+#define RE			(1U<<2) //Receptor PA1 -> A1
 #define TXE			(1U<<7)
 #define RXNE		(1U<<5)
 
 #define BUFFER_SIZE	100
 
 char uart4Buffer[BUFFER_SIZE];
-uint32_t uart2Pos = 0;
+uint32_t uart4Pos = 0;
 void uart4RxTxIni(uint32_t baudRate, uint32_t clkPerif)
 {
 	uint16_t uartDiv;
@@ -77,7 +77,7 @@ char uart4Read(void)
 	{
 
 	}
-	return (UART4->SR & 0xFF);
+	return (UART4->DR & 0xFF);
 }
 
 char* uart4ReadString(void)
