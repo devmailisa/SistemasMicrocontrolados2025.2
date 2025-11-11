@@ -1,0 +1,2 @@
+../Src/systick.c:10:6:delayMs	24	static
+../Src/systick.c:29:6:delayUs	24	static

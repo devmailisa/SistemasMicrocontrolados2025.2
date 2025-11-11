@@ -1,0 +1,6 @@
+../Src/uart2.c:17:6:uart2Write	16	static
+../Src/uart2.c:28:5:__io_putchar	16	static
+../Src/uart2.c:34:6:uart2RxTxIni	24	static
+../Src/uart2.c:59:6:uart2Read	4	static
+../Src/uart2.c:70:7:uart2ReadString	16	static
+../Src/uart2.c:88:6:uart2SendString	16	static
