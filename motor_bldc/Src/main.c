@@ -12,17 +12,52 @@
 
 
 //Gerando pulso de throller a partir do valor de entrada na uart2
-void thr(uint32_t en, double dCAtual)
+int thr(uint32_t en, uint32_t dcAtual)
 {
-	uint8_t dc;
-	double passo = (dCMax - dCMin)/100;
-	dc = 53 + passo*en;
+	if(en < 1 || en > 100) return 0;
 
-	//duty cycle de 53 a 118
-	while(1)
+	uint32_t dc;
+	float passo;
+
+	passo = (dCMax - dCMin)/99;
+	dc = dCMin + passo*(en - 1); //COMPARADOR
+
+	if(dcAtual > dc)
 	{
-		//Configurar a rampa aqui
+		while(dcAtual != dc)
+		{
+			uint32_t diff = dcAtual - dc;
+			if(diff >= 2)
+			{
+				dcAtual -= 2;
+			} else
+			{
+				dcAtual -= diff;
+			}
+
+			setDuty(1, dcAtual);
+			delayMs(50);
+		}
+
+	} else if(dCAtual < dc)
+	{
+		while(dcAtual != dc)
+		{
+			uint32_t diff = dc - dcAtual;
+			if(diff >= 2)
+			{
+				dcAtual += 2;
+			} else
+			{
+				dcAtual += diff;
+			}
+
+			setDuty(1, dcAtual);
+			delayMs(50);
+		}
 	}
+
+	return dcAtual;
 }
 
 
