@@ -20,9 +20,9 @@
 #define dCMax 118
 
 //FUNÇÃO PARA ALTERAR A AMPLITUDADE DA RAMPA
-int set_step(uint8_t * step, uint8_t new_step)
+int set_step(uint32_t * step, uint32_t new_step)
 {
-	if(*step > 0 && *step < 11){
+	if(new_step > 0 && new_step < 11){
 		*step = new_step;
 		return 1;
 	}
@@ -37,9 +37,9 @@ void set_hold(uint32_t * delay, uint8_t new_delay)
 }
 
 //GERANDO PULSO DE THROTTLE - ACELERADOR
-int thr(uint32_t en, uint32_t *dcAtual, uint32_t * delay, uint8_t * step)
+int thr(uint32_t en, uint32_t *dcAtual, uint32_t * delay, uint32_t * step)
 {
-    if(en < 1 || en > 100) return 0;
+    if(en < 0 || en > 100) return 0;
 
     uint32_t dc;
     float passo;
@@ -87,9 +87,9 @@ int thr(uint32_t en, uint32_t *dcAtual, uint32_t * delay, uint8_t * step)
     return 1;
 }
 
-int check_in(char * entrada, char * func, uint8_t * val) {
-
-    int final_func = strnlen(func, 20);
+//FUNÇÃO PARA VALIDAR A ENTRADA
+int check_in(char *entrada, char *func, uint32_t *val) {
+    int final_func = strlen(func);
 
     if (strncmp(entrada, func, final_func) != 0) {
         return 0;
@@ -97,24 +97,36 @@ int check_in(char * entrada, char * func, uint8_t * val) {
 
     int digitos = 0;
     int i = final_func;
-    char num[3];
+    char num[4];  // Para armazenar até 3 dígitos + '\0'
     while (isdigit(entrada[i])) {
         num[digitos] = entrada[i];
         digitos++;
         i++;
-        if (digitos > 3) {
+
+        // Garantir que não ultrapasse 10 dígitos
+        if (digitos > 10) {
             return 0;
         }
     }
 
-    if (entrada[i] != '\0') {
+    if (digitos == 0) return 0;  // Se não foi lido nenhum dígito
+
+    num[digitos] = '\0';  // Garantir que a string seja corretamente terminada
+
+    if (entrada[i] != '\0') {  // Verifica se há caracteres extras após o número
         return 0;
     }
 
-    *val = atoi(num);
-    //printf("%d\r\n", *val);
+    // Converte a string num para uint32_t com verificação
+    long int temp_val = strtol(num, NULL, 10);
+    if (temp_val < 0 || temp_val > UINT32_MAX) {
+        return 0;  // Valor fora do intervalo de uint32_t
+    }
+    *val = (uint32_t)temp_val;
+
     return 1;
 }
+
 
 int main(void)
 {
@@ -123,10 +135,10 @@ int main(void)
 	uart2RxTxIni(baudRate, clk);
 
 	char * entrada;
-	uint8_t val;
+	uint32_t val;
 	uint32_t dcAtual = 53;
 	uint32_t delay = 50;
-	uint8_t step = 2;
+	uint32_t step = 2;
 
 	while(1)
 	{
