@@ -23,7 +23,7 @@
 //Gerando pulso de throller a partir do valor de entrada na uart2
 int thr(uint32_t en, uint32_t *dcAtual)
 {
-    if(en < 1 || en > 100) return 0;
+    if(en < 0 || en > 100) return 0;
 
     uint32_t dc;
     float passo;
