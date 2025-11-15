@@ -45,6 +45,7 @@ int thr(uint32_t en, uint32_t *dcAtual)
             {
                 *dcAtual -= diff;
             }
+            delayMs(50);
         }
 
     } else if(*dcAtual < dc)
@@ -59,6 +60,7 @@ int thr(uint32_t en, uint32_t *dcAtual)
             {
                 *dcAtual += diff;
             }
+            delayMs(50);
         }
     }
 
