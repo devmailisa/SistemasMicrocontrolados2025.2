@@ -1,6 +1,6 @@
 /*
- * CONTROLADOR DO MOTOR BLDC COM MCU STM32F446RExx
- */
+ * CONTROLADOR DO MOTOR BLDC COM MCU STM32F446REX
+*/
 
 #include <stdint.h>
 #include <stdio.h>
@@ -19,11 +19,27 @@
 #define dCMin 53
 #define dCMax 118
 
-
-//Gerando pulso de throller a partir do valor de entrada na uart2
-int thr(uint32_t en, uint32_t *dcAtual)
+//FUNÇÃO PARA ALTERAR A AMPLITUDADE DA RAMPA
+int set_step(uint8_t * step, uint8_t new_step)
 {
-    if(en < 0 || en > 100) return 0;
+	if(*step > 0 && *step < 11){
+		*step = new_step;
+		return 1;
+	}
+
+	return 0;
+}
+
+//FUNÇÃO PARA ALTERAR O DELAY ENTRE O ENVIO DO SINAL
+void set_hold(uint32_t * delay, uint8_t new_delay)
+{
+	*delay = new_delay;
+}
+
+//GERANDO PULSO DE THROTTLE - ACELERADOR
+int thr(uint32_t en, uint32_t *dcAtual, uint32_t * delay, uint8_t * step)
+{
+    if(en < 1 || en > 100) return 0;
 
     uint32_t dc;
     float passo;
@@ -38,14 +54,15 @@ int thr(uint32_t en, uint32_t *dcAtual)
         while(*dcAtual != dc)
         {
             uint32_t diff = *dcAtual - dc;
-            if(diff >= 2)
+            if(diff >= *step)
             {
-                *dcAtual -= 2;
+                *dcAtual -= *step;
             } else
             {
                 *dcAtual -= diff;
             }
-            delayMs(50);
+
+            delayMs(*delay);
         }
 
     } else if(*dcAtual < dc)
@@ -53,14 +70,15 @@ int thr(uint32_t en, uint32_t *dcAtual)
         while(*dcAtual != dc)
         {
             uint32_t diff = dc - *dcAtual;
-            if(diff >= 2)
+            if(diff >= *step)
             {
-                *dcAtual += 2;
+                *dcAtual += *step;
             } else
             {
                 *dcAtual += diff;
             }
-            delayMs(50);
+
+            delayMs(*delay);
         }
     }
 
@@ -68,7 +86,6 @@ int thr(uint32_t en, uint32_t *dcAtual)
 
     return 1;
 }
-
 
 int check_in(char * entrada, char * func, uint8_t * val) {
 
@@ -108,6 +125,8 @@ int main(void)
 	char * entrada;
 	uint8_t val;
 	uint32_t dcAtual = 53;
+	uint32_t delay = 50;
+	uint8_t step = 2;
 
 	while(1)
 	{
@@ -116,20 +135,29 @@ int main(void)
 		if(check_in(entrada, "THR ", &val))
 		{
 			//chama THR
-			int err_thr = thr(val, &dcAtual);
+			int err_thr = thr(val, &dcAtual, &delay, &step);
 			if(!err_thr)
 			{
-				printf("ERR:ALVO DO THROLLER FORA DO INTERVALO DE [0, 100]\r\n");
+				printf("ERR:ALVO DO THROTTLE FORA DO INTERVALO DE [0, 100]\r\n");
 			} else
 			{
-				printf("THROLLER AJUSTADO COM SUCESSO\r\n");
+				printf("THROTTLE AJUSTADO COM SUCESSO\r\n");
 			}
 		} else if (check_in(entrada, "SET STEP=", &val))
 		{
 			//chama SET STEP
+			if(set_step(&step, val))
+			{
+				printf("STEP AJUSTADO COM SUCESSO\r\n");
+			} else
+			{
+				printf("STEP FORA DO INTERVALO [1, 10]\r\n");
+			}
+
 		} else if (check_in(entrada, "SET HOLD=", &val))
 		{
-			//chama SET HOLD
+			set_hold(&delay, val);
+			printf("HOLD AJUSTADO COM SUCESSO\r\n");
 		}
 	}
 }
